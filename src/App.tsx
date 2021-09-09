@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { DataSource } from "./DataSource";
-import { Orderbook } from "./Orderbook";
+import { Orderbook } from "./Orderbook/Orderbook";
 import { DeltaMessage, InitialSnapshotMessage, ProductId } from "./types";
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
   const [delta, setDelta] = useState<DeltaMessage>();
 
   return (
-    <div>
+    <main>
       <DataSource
         productId={ProductId.PI_XBTUSD}
         setInitialSnapshot={setInitialSnapshot}
@@ -19,7 +19,7 @@ function App() {
       {initialSnapshot ? (
         <Orderbook initialSnapshot={initialSnapshot} delta={delta} />
       ) : null}
-    </div>
+    </main>
   );
 }
 

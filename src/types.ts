@@ -14,19 +14,22 @@ interface SubscribedMessage {
   product_ids: string[];
 }
 
+export type PriceLevel = [number, number]; // price, size
+export type PriceLevelWithTotal = [number, number, number]; // price, size, total
+
 export interface InitialSnapshotMessage {
   numLevels: number;
   product_id: string;
   feed: "book_ui_1_snapshot";
-  bids: [number, number][];
-  asks: [number, number][];
+  bids: PriceLevel[];
+  asks: PriceLevel[];
 }
 
 export interface DeltaMessage {
   product_id: ProductId;
   feed: "book_ui_1";
-  bids: [number, number][];
-  asks: [number, number][];
+  bids: PriceLevel[];
+  asks: PriceLevel[];
 }
 
 export type SocketMessage =
