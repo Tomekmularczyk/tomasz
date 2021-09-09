@@ -15,7 +15,6 @@ interface SubscribedMessage {
 }
 
 export type PriceLevel = [number, number]; // price, size
-export type PriceLevelWithTotal = [number, number, number]; // price, size, total
 
 export interface InitialSnapshotMessage {
   numLevels: number;
@@ -28,8 +27,8 @@ export interface InitialSnapshotMessage {
 export interface DeltaMessage {
   product_id: ProductId;
   feed: "book_ui_1";
-  bids: PriceLevel[];
-  asks: PriceLevel[];
+  bids?: PriceLevel[];
+  asks?: PriceLevel[];
 }
 
 export type SocketMessage =

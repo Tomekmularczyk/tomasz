@@ -1,38 +1,12 @@
 import React from "react";
 import styled from "styled-components/macro";
-import { PriceLevelWithTotal } from "../types";
 
 type Variant = "bids" | "asks";
 
-const Level = styled.div<{ depthPercentage: number; variant?: Variant }>`
+const Level = styled.div`
   padding-left: 10%;
   padding-right: 5%;
   padding: 4px 5% 4px 10%;
-  background: ${({ variant, depthPercentage }) => {
-    const depth = 100 - depthPercentage;
-    switch (variant) {
-      case "bids":
-        return `
-          linear-gradient(
-            90deg,
-            transparent ${depth}%,
-            #00ff0035 ${depth}%,
-            #00FF0035 100%
-          )
-        `;
-      case "asks":
-        return `
-          linear-gradient(
-            270deg,
-            transparent ${depth}%,
-            #ff000035 ${depth}%,
-            #ff000035 100%
-          )
-        `;
-      default:
-        return "tranparent";
-    }
-  }};
 `;
 
 const ColumnTitle = styled.p`
@@ -65,8 +39,14 @@ const priceFormatter = new Intl.NumberFormat("en-IN", {
   minimumFractionDigits: 2,
 });
 
+export interface PriceObj {
+  price: number;
+  size: number;
+  total: number;
+}
+
 interface Props {
-  priceLevels: PriceLevelWithTotal[];
+  priceLevels: PriceObj[];
   highestTotal: number;
   variant: Variant;
 }
@@ -78,7 +58,7 @@ export const PriceLevelsList = ({
 }: Props) => {
   return (
     <>
-      <Level depthPercentage={0}>
+      <Level>
         <DataRow variant={variant}>
           <DataCell>
             <ColumnTitle>total</ColumnTitle>
@@ -92,15 +72,38 @@ export const PriceLevelsList = ({
         </DataRow>
       </Level>
       <List>
-        {priceLevels.map(([price, size, total]) => {
+        {priceLevels.map(({ price, size, total }) => {
           const depthPercentage = (total / highestTotal) * 100;
+          const depth = 100 - depthPercentage;
+          let background;
+          switch (variant) {
+            case "bids":
+              background = `
+                linear-gradient(
+                  90deg,
+                  transparent ${depth}%,
+                  #00ff0035 ${depth}%,
+                  #00FF0035 100%
+                )
+              `;
+              break;
+            case "asks":
+              background = `
+                linear-gradient(
+                  270deg,
+                  transparent ${depth}%,
+                  #ff000035 ${depth}%,
+                  #ff000035 100%
+                )
+              `;
+              break;
+            default:
+              break;
+          }
+
           return (
             <li>
-              <Level
-                key={price}
-                depthPercentage={depthPercentage}
-                variant={variant}
-              >
+              <Level key={price} style={{ background }}>
                 <DataRow variant={variant}>
                   <DataCell>{numberFormatter.format(total)}</DataCell>
                   <DataCell>{numberFormatter.format(size)}</DataCell>
