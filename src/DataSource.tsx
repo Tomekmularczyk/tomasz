@@ -8,6 +8,7 @@ import {
   ProductId,
   SocketMessage,
 } from "./types";
+import { useThrottleFn } from "react-use";
 
 interface Props {
   productId: ProductId;
@@ -41,10 +42,21 @@ export const DataSource = ({
     }
     if (isInitialSnaphotMessage(lastMessage)) {
       setInitialSnapshot(lastMessage);
-    } else if (isDeltaMessage(lastMessage)) {
-      setDeltaMessage(lastMessage);
     }
-  }, [lastMessage, setInitialSnapshot, setDeltaMessage]);
+  }, [lastMessage, setInitialSnapshot]);
+
+  useThrottleFn(
+    (message: SocketMessage | undefined) => {
+      if (!message) {
+        return;
+      }
+      if (isDeltaMessage(message)) {
+        setDeltaMessage(message);
+      }
+    },
+    500,
+    [lastMessage]
+  );
 
   return null;
 };

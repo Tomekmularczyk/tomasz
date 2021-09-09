@@ -102,8 +102,8 @@ export const PriceLevelsList = ({
           }
 
           return (
-            <li>
-              <Level key={price} style={{ background }}>
+            <li key={price}>
+              <Level style={{ background }}>
                 <DataRow variant={variant}>
                   <DataCell>{numberFormatter.format(total)}</DataCell>
                   <DataCell>{numberFormatter.format(size)}</DataCell>
