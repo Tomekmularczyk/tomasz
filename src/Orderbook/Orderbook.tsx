@@ -42,16 +42,19 @@ export const Orderbook = ({ initialSnapshot, delta }: Props) => {
   const bidsWithTotals = useMemo(() => calculateTotals(state.bids), [state]);
   const asksWithTotals = useMemo(() => calculateTotals(state.asks), [state]);
 
-  const lastBidPriceLevel = bidsWithTotals[bidsWithTotals.length - 1];
-  const lastAskPriceLevel = bidsWithTotals[bidsWithTotals.length - 1];
+  const [topBid] = bidsWithTotals;
+  const [topAsk] = asksWithTotals;
+  const bottomBid = bidsWithTotals[bidsWithTotals.length - 1];
+  const bottomAsk = bidsWithTotals[bidsWithTotals.length - 1];
   const highestTotal =
-    lastBidPriceLevel[2] > lastAskPriceLevel[2]
-      ? lastBidPriceLevel[2]
-      : lastAskPriceLevel[2];
+    bottomBid[2] > bottomAsk[2] ? bottomBid[2] : bottomAsk[2];
+
+  const spreadPoints = topAsk[0] - topBid[0];
+  const spreadPercentage = (spreadPoints / topAsk[0]) * 100;
 
   return (
     <MainContainer>
-      <Header spreadPoints={17.0} spreadPercentage={0.05} />
+      <Header spreadPoints={spreadPoints} spreadPercentage={spreadPercentage} />
       <OrdersContainer>
         <OrdersListWrapper>
           <PriceLevelsList

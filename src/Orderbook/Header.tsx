@@ -15,6 +15,16 @@ const SpreadText = styled.p`
   margin-left: auto;
 `;
 
+const spreadFormatter = new Intl.NumberFormat("en-IN", {
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 1,
+});
+
+const percentageFormatter = new Intl.NumberFormat("en-IN", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
 interface Props {
   spreadPoints: number;
   spreadPercentage: number;
@@ -25,7 +35,8 @@ export const Header = ({ spreadPoints, spreadPercentage }: Props) => {
     <TopHeader>
       <p>Order Book</p>
       <SpreadText>
-        Spread: {spreadPoints} ({spreadPercentage}%)
+        Spread: {spreadFormatter.format(spreadPoints)} (
+        {percentageFormatter.format(spreadPercentage)}%)
       </SpreadText>
     </TopHeader>
   );
