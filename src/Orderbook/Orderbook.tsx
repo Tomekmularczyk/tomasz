@@ -39,18 +39,17 @@ const OrdersListWrapper = styled.div`
 
 const getPriceListWithTotals = (
   priceLevels: Record<number, PriceLevelData>,
-  maxListSize = 25,
-  priceDirection: "asc" | "desc" = "desc"
+  direction: "asc" | "desc",
+  listSize: number
 ): PriceLevelData[] => {
   const list = Object.entries(priceLevels)
     .sort((a, b) => {
-      if (priceDirection === "desc") {
-        return Number(b[0]) - Number(a[0]);
-      }
-      return Number(a[0]) - Number(b[0]);
+      const valueOfA = Number(a[0]);
+      const valueOfB = Number(b[0]);
+      return direction === "asc" ? valueOfA - valueOfB : valueOfB - valueOfA;
     })
-    .map(([, value]) => value)
-    .slice(0, maxListSize);
+    .slice(0, listSize)
+    .map(([, value]) => value);
 
   let total = 0;
   return list.map(({ price, size }) => {
@@ -110,28 +109,21 @@ export const Orderbook = ({ initialSnapshot, deltas }: Props) => {
   }, [deltas]);
 
   const bidsWithTotals = useMemo(
-    () => getPriceListWithTotals(bids, numberOfPriceLevels),
+    () => getPriceListWithTotals(bids, "desc", numberOfPriceLevels),
     [bids, numberOfPriceLevels]
   );
   const asksWithTotals = useMemo(
-    () =>
-      getPriceListWithTotals(
-        asks,
-        numberOfPriceLevels,
-        isTabletAndAbove ? "asc" : "desc"
-      ),
-    [asks, numberOfPriceLevels, isTabletAndAbove]
+    () => getPriceListWithTotals(asks, "asc", numberOfPriceLevels),
+    [asks, numberOfPriceLevels]
   );
 
   const [topBid] = bidsWithTotals;
   const [topAsk] = asksWithTotals;
   const bottomBid = bidsWithTotals[bidsWithTotals.length - 1];
-  const bottomAsk = bidsWithTotals[bidsWithTotals.length - 1];
+  const bottomAsk = asksWithTotals[asksWithTotals.length - 1];
   const highestTotal =
     bottomBid.total > bottomAsk.total ? bottomBid.total : bottomAsk.total;
-  const spreadPoints = isTabletAndAbove
-    ? topAsk.price - topBid.price
-    : bottomAsk.price - topBid.price;
+  const spreadPoints = topAsk.price - topBid.price;
   const spreadPercentage = (spreadPoints / topBid.price) * 100;
 
   return (
@@ -150,7 +142,9 @@ export const Orderbook = ({ initialSnapshot, deltas }: Props) => {
           <PriceLevelsList
             colorVariant="red"
             depthGraphAlign="left"
-            priceLevels={asksWithTotals}
+            priceLevels={
+              isTabletAndAbove ? asksWithTotals : asksWithTotals.reverse()
+            }
             highestTotal={highestTotal}
             shouldDisplayColumnTitles
             shouldReverseColumns
