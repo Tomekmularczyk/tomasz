@@ -37,6 +37,24 @@ const OrdersListWrapper = styled.div`
   }
 `;
 
+const ToggleFeedButton = styled.button`
+  background-color: purple;
+  cursor: pointer;
+  border: none;
+  margin: 8px auto;
+  color: white;
+  border-radius: 2px;
+  padding: 4px 8px;
+  letter-spacing: 2px;
+  &:active {
+    opacity: 0.9;
+  }
+`;
+
+const Footer = styled.div`
+  text-align: center;
+`;
+
 const getPriceListWithTotals = (
   priceLevels: Record<number, PriceLevelData>,
   direction: "asc" | "desc",
@@ -93,9 +111,14 @@ const updateLevel = (
 interface Props {
   initialSnapshot: InitialSnapshotMessage;
   deltas: DeltaMessage[];
+  onToggleFeedClick: () => void;
 }
 
-export const Orderbook = ({ initialSnapshot, deltas }: Props) => {
+export const Orderbook = ({
+  initialSnapshot,
+  deltas,
+  onToggleFeedClick,
+}: Props) => {
   const isTabletAndAbove = useMedia("(min-width: 768px)");
   const [asks, setAsks] = useState(() => mapPrices(initialSnapshot.asks));
   const [bids, setBids] = useState(() => mapPrices(initialSnapshot.bids));
@@ -167,6 +190,11 @@ export const Orderbook = ({ initialSnapshot, deltas }: Props) => {
           />
         </OrdersListWrapper>
       </OrdersContainer>
+      <Footer>
+        <ToggleFeedButton type="button" onClick={onToggleFeedClick}>
+          Toggle Feed
+        </ToggleFeedButton>
+      </Footer>
     </MainContainer>
   );
 };

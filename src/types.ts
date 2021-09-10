@@ -46,5 +46,5 @@ export const isInitialSnaphotMessage = (
 export const isDeltaMessage = (
   message: SocketMessage
 ): message is DeltaMessage => {
-  return (message as DeltaMessage).feed === "book_ui_1";
+  return !!(message as DeltaMessage).asks || !!(message as DeltaMessage).bids;
 };
