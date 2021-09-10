@@ -31,11 +31,8 @@ const DataCell = styled.span`
   text-align: right;
 `;
 
-const List = styled.ol<{ shouldReversePriceLevels?: boolean }>`
+const List = styled.ol`
   list-style: none;
-  display: flex;
-  flex-direction: ${({ shouldReversePriceLevels }) =>
-    shouldReversePriceLevels ? "column-reverse" : "column"};
 `;
 
 const Price = styled.span<{ variant: ColorVariant }>`
@@ -107,7 +104,6 @@ export const PriceLevelsList = ({
   depthGraphAlign,
   shouldDisplayColumnTitles = false,
   shouldReverseColumns = false,
-  shouldReversePriceLevels = false,
 }: Props) => {
   return (
     <>
@@ -128,7 +124,7 @@ export const PriceLevelsList = ({
           </Level>
         </ColumnTitlesWrapper>
       ) : null}
-      <List shouldReversePriceLevels={shouldReversePriceLevels}>
+      <List>
         {priceLevels.map(({ price, size, total }) => (
           <li key={price}>
             <Level

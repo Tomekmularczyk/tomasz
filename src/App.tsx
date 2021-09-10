@@ -6,17 +6,17 @@ import { DeltaMessage, InitialSnapshotMessage, ProductId } from "./types";
 function App() {
   const [initialSnapshot, setInitialSnapshot] =
     useState<InitialSnapshotMessage>();
-  const [delta, setDelta] = useState<DeltaMessage>();
+  const [deltas, setDeltas] = useState<DeltaMessage[]>([]);
 
   return (
     <main>
       <DataSource
         productId={ProductId.PI_XBTUSD}
         setInitialSnapshot={setInitialSnapshot}
-        setDeltaMessage={setDelta}
+        setDeltaMessages={setDeltas}
       />
       {initialSnapshot ? (
-        <Orderbook initialSnapshot={initialSnapshot} delta={delta} />
+        <Orderbook initialSnapshot={initialSnapshot} deltas={deltas} />
       ) : null}
     </main>
   );

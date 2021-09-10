@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import {
   DeltaMessage,
@@ -8,23 +8,24 @@ import {
   ProductId,
   SocketMessage,
 } from "./types";
-import { useThrottleFn } from "react-use";
+import { useInterval } from "react-use";
 
 interface Props {
   productId: ProductId;
   setInitialSnapshot: (snapshot: InitialSnapshotMessage) => void;
-  setDeltaMessage: (delta: DeltaMessage) => void;
+  setDeltaMessages: (delta: DeltaMessage[]) => void;
 }
 
 export const DataSource = ({
   productId,
   setInitialSnapshot,
-  setDeltaMessage,
+  setDeltaMessages,
 }: Props) => {
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
     "wss://www.cryptofacilities.com/ws/v1"
   );
   const lastMessage: SocketMessage | undefined = lastJsonMessage;
+  const deltasRef = useRef<DeltaMessage[]>([]);
 
   useEffect(() => {
     if (readyState === ReadyState.OPEN) {
@@ -42,21 +43,16 @@ export const DataSource = ({
     }
     if (isInitialSnaphotMessage(lastMessage)) {
       setInitialSnapshot(lastMessage);
+    } else if (isDeltaMessage(lastMessage)) {
+      deltasRef.current.push(lastMessage);
     }
   }, [lastMessage, setInitialSnapshot]);
 
-  useThrottleFn(
-    (message: SocketMessage | undefined) => {
-      if (!message) {
-        return;
-      }
-      if (isDeltaMessage(message)) {
-        setDeltaMessage(message);
-      }
-    },
-    500,
-    [lastMessage]
-  );
+  // batch updates to prevent too many re-renders
+  useInterval(() => {
+    setDeltaMessages(deltasRef.current);
+    deltasRef.current = [];
+  }, 3000);
 
   return null;
 };
