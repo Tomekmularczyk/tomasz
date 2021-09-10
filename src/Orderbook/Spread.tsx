@@ -1,18 +1,11 @@
 import React from "react";
 import styled from "styled-components/macro";
 
-const TopHeader = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  border-bottom: 2px solid white;
-  color: white;
-  padding: 8px 10px;
-`;
-
 const SpreadText = styled.p`
   color: gray;
   margin-right: auto;
   margin-left: auto;
+  margin: 5px auto;
 `;
 
 const spreadFormatter = new Intl.NumberFormat("en-IN", {
@@ -30,14 +23,11 @@ interface Props {
   spreadPercentage: number;
 }
 
-export const Header = ({ spreadPoints, spreadPercentage }: Props) => {
+export const Spread = ({ spreadPoints, spreadPercentage }: Props) => {
   return (
-    <TopHeader>
-      <p>Order Book</p>
-      <SpreadText>
-        Spread: {spreadFormatter.format(spreadPoints)} (
-        {percentageFormatter.format(spreadPercentage)}%)
-      </SpreadText>
-    </TopHeader>
+    <SpreadText>
+      Spread: {spreadFormatter.format(spreadPoints)} (
+      {percentageFormatter.format(spreadPercentage)}%)
+    </SpreadText>
   );
 };

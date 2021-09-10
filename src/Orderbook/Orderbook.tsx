@@ -1,27 +1,46 @@
 import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components/macro";
 import { DeltaMessage, InitialSnapshotMessage, PriceLevel } from "../types";
-import { Header } from "./Header";
-import { PriceLevelsList, PriceObj } from "./PriceLevelsList";
+import { PriceLevelsList, PriceLevelData } from "./PriceLevelsList";
+import { useMedia } from "react-use";
+import { Spread } from "./Spread";
 
 const MainContainer = styled.div`
   background-color: black;
   font-family: "Courier New", sans-serif;
 `;
 
+const TopHeader = styled.div`
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr 1fr 1fr;
+  border-bottom: 2px solid white;
+  color: white;
+  padding: 6px 10px;
+`;
+
 const OrdersContainer = styled.div`
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
+
+  @media (min-width: 768px) {
+    flex-wrap: nowrap;
+    flex-direction: row-reverse;
+  }
 `;
 
 const OrdersListWrapper = styled.div`
-  width: 50%;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    width: 50%;
+  }
 `;
 
 const getPriceListWithTotals = (
-  priceLevels: Record<number, PriceObj>,
+  priceLevels: Record<number, PriceLevelData>,
   maxListSize = 25
-): PriceObj[] => {
+): PriceLevelData[] => {
   const list = Object.entries(priceLevels)
     .sort((a, b) => +b[0] - +a[0])
     .map((entry) => entry[1])
@@ -35,16 +54,20 @@ const getPriceListWithTotals = (
 };
 
 const mapPrices = (priceLevels: [number, number][]) =>
-  priceLevels.reduce<Record<number, PriceObj>>(
+  priceLevels.reduce<Record<number, PriceLevelData>>(
     (acc, next) => ({
       ...acc,
-      [next[0]]: { price: next[0], size: next[1], total: 0 },
+      [next[0]]: {
+        price: next[0],
+        size: next[1],
+        total: 0, // total will be calucalated separately later
+      },
     }),
     {}
   );
 
 const updateLevel = (
-  currentState: Record<number, PriceObj>,
+  currentState: Record<number, PriceLevelData>,
   priceLevels: PriceLevel[]
 ) => {
   const stateCopy = { ...currentState };
@@ -70,6 +93,8 @@ interface Props {
 export const Orderbook = ({ initialSnapshot, delta }: Props) => {
   const [asks, setAsks] = useState(() => mapPrices(initialSnapshot.asks));
   const [bids, setBids] = useState(() => mapPrices(initialSnapshot.bids));
+  const isTabletAndAbove = useMedia("(min-width: 768px)");
+  const numberOfPriceLevels = isTabletAndAbove ? 25 : 10;
 
   useEffect(() => {
     if (delta) {
@@ -78,8 +103,14 @@ export const Orderbook = ({ initialSnapshot, delta }: Props) => {
     }
   }, [delta]);
 
-  const bidsWithTotals = useMemo(() => getPriceListWithTotals(bids), [bids]);
-  const asksWithTotals = useMemo(() => getPriceListWithTotals(asks), [asks]);
+  const bidsWithTotals = useMemo(
+    () => getPriceListWithTotals(bids, numberOfPriceLevels),
+    [bids, numberOfPriceLevels]
+  );
+  const asksWithTotals = useMemo(
+    () => getPriceListWithTotals(asks, numberOfPriceLevels),
+    [asks, numberOfPriceLevels]
+  );
 
   const [topBid] = bidsWithTotals;
   const [topAsk] = asksWithTotals;
@@ -92,20 +123,41 @@ export const Orderbook = ({ initialSnapshot, delta }: Props) => {
 
   return (
     <MainContainer>
-      <Header spreadPoints={spreadPoints} spreadPercentage={spreadPercentage} />
+      <TopHeader>
+        <p>Order Book</p>
+        {isTabletAndAbove ? (
+          <Spread
+            spreadPoints={spreadPoints}
+            spreadPercentage={spreadPercentage}
+          />
+        ) : null}
+      </TopHeader>
       <OrdersContainer>
         <OrdersListWrapper>
           <PriceLevelsList
-            variant="bids"
-            priceLevels={bidsWithTotals}
-            highestTotal={highestTotal}
-          />
-        </OrdersListWrapper>
-        <OrdersListWrapper>
-          <PriceLevelsList
-            variant="asks"
+            colorVariant="red"
+            depthGraphAlign="left"
             priceLevels={asksWithTotals}
             highestTotal={highestTotal}
+            shouldDisplayColumnTitles
+            shouldReverseColumns
+            shouldReversePriceLevels={!isTabletAndAbove}
+          />
+        </OrdersListWrapper>
+        {!isTabletAndAbove ? (
+          <Spread
+            spreadPoints={spreadPoints}
+            spreadPercentage={spreadPercentage}
+          />
+        ) : null}
+        <OrdersListWrapper>
+          <PriceLevelsList
+            colorVariant="green"
+            depthGraphAlign={isTabletAndAbove ? "right" : "left"}
+            priceLevels={bidsWithTotals}
+            highestTotal={highestTotal}
+            shouldDisplayColumnTitles={isTabletAndAbove}
+            shouldReverseColumns={!isTabletAndAbove}
           />
         </OrdersListWrapper>
       </OrdersContainer>
