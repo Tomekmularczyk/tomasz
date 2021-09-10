@@ -1,29 +1,28 @@
 import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components/macro";
-import { DeltaMessage, InitialSnapshotMessage, PriceLevel } from "../types";
-import { PriceLevelsList, PriceLevelData } from "./PriceLevelsList";
-import { useMedia } from "react-use";
+import { Breakpoints } from "../theme";
+import {
+  DeltaMessage,
+  FeedStatus,
+  InitialSnapshotMessage,
+  PriceLevel,
+} from "../types";
+import { Footer } from "./Footer";
+import { Header } from "./Header";
+import { PriceLevelData, PriceLevelsList } from "./PriceLevelsList";
 import { Spread } from "./Spread";
+import { useIsTabletAndAbove } from "./useIsTabletAndAbove";
 
 const MainContainer = styled.div`
   background-color: black;
   font-family: "Courier New", sans-serif;
 `;
 
-const TopHeader = styled.div`
-  display: grid;
-  align-items: center;
-  grid-template-columns: 1fr 1fr 1fr;
-  border-bottom: 2px solid white;
-  color: white;
-  padding: 6px 10px;
-`;
-
 const OrdersContainer = styled.div`
   display: flex;
   flex-flow: row wrap;
 
-  @media (min-width: 768px) {
+  @media (min-width: ${Breakpoints.Tablet}px) {
     flex-wrap: nowrap;
     flex-direction: row-reverse;
   }
@@ -32,27 +31,9 @@ const OrdersContainer = styled.div`
 const OrdersListWrapper = styled.div`
   width: 100%;
 
-  @media (min-width: 768px) {
+  @media (min-width: ${Breakpoints.Tablet}px) {
     width: 50%;
   }
-`;
-
-const ToggleFeedButton = styled.button`
-  background-color: purple;
-  cursor: pointer;
-  border: none;
-  margin: 8px auto;
-  color: white;
-  border-radius: 2px;
-  padding: 4px 8px;
-  letter-spacing: 2px;
-  &:active {
-    opacity: 0.9;
-  }
-`;
-
-const Footer = styled.div`
-  text-align: center;
 `;
 
 const getPriceListWithTotals = (
@@ -112,14 +93,18 @@ interface Props {
   initialSnapshot: InitialSnapshotMessage;
   deltas: DeltaMessage[];
   onToggleFeedClick: () => void;
+  feedStatus: FeedStatus;
+  onRestartFeedClick: () => void;
 }
 
 export const Orderbook = ({
   initialSnapshot,
   deltas,
   onToggleFeedClick,
+  feedStatus,
+  onRestartFeedClick,
 }: Props) => {
-  const isTabletAndAbove = useMedia("(min-width: 768px)");
+  const isTabletAndAbove = useIsTabletAndAbove();
   const [asks, setAsks] = useState(() => mapPrices(initialSnapshot.asks));
   const [bids, setBids] = useState(() => mapPrices(initialSnapshot.bids));
   const numberOfPriceLevels = isTabletAndAbove ? 25 : 10;
@@ -151,15 +136,12 @@ export const Orderbook = ({
 
   return (
     <MainContainer>
-      <TopHeader>
-        <p>Order Book</p>
-        {isTabletAndAbove ? (
-          <Spread
-            spreadPoints={spreadPoints}
-            spreadPercentage={spreadPercentage}
-          />
-        ) : null}
-      </TopHeader>
+      <Header
+        spreadPoints={spreadPoints}
+        spreadPercentage={spreadPercentage}
+        feedStatus={feedStatus}
+        onRestartFeedClick={onRestartFeedClick}
+      />
       <OrdersContainer>
         <OrdersListWrapper>
           <PriceLevelsList
@@ -190,11 +172,7 @@ export const Orderbook = ({
           />
         </OrdersListWrapper>
       </OrdersContainer>
-      <Footer>
-        <ToggleFeedButton type="button" onClick={onToggleFeedClick}>
-          Toggle Feed
-        </ToggleFeedButton>
-      </Footer>
+      <Footer onToggleFeedClick={onToggleFeedClick} />
     </MainContainer>
   );
 };

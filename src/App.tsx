@@ -1,13 +1,29 @@
 import React, { useCallback, useState } from "react";
+import { useEvent } from "react-use";
 import { DataSource } from "./DataSource";
 import { Orderbook } from "./Orderbook/Orderbook";
-import { DeltaMessage, InitialSnapshotMessage, ProductId } from "./types";
+import {
+  DeltaMessage,
+  FeedStatus,
+  InitialSnapshotMessage,
+  ProductId,
+} from "./types";
 
 function App() {
+  const [feedStatus, setFeedStatus] = useState<FeedStatus>("feeding");
   const [productId, setProductId] = useState(ProductId.PI_XBTUSD);
   const [initialSnapshot, setInitialSnapshot] =
     useState<InitialSnapshotMessage>();
   const [deltas, setDeltas] = useState<DeltaMessage[]>([]);
+
+  useEvent("blur", () => {
+    setFeedStatus("stopped");
+  });
+
+  const resetOrderbookData = useCallback(() => {
+    setInitialSnapshot(undefined);
+    setDeltas([]);
+  }, []);
 
   const handleToggleFeed = useCallback(() => {
     if (productId === ProductId.PI_ETHUSD) {
@@ -16,22 +32,30 @@ function App() {
       setProductId(ProductId.PI_ETHUSD);
     }
     // reinitialize orderbook
-    setInitialSnapshot(undefined);
-    setDeltas([]);
-  }, [productId]);
+    resetOrderbookData();
+  }, [productId, resetOrderbookData]);
+
+  const handleRestartFeed = useCallback(() => {
+    setFeedStatus("feeding");
+    resetOrderbookData();
+  }, [resetOrderbookData]);
 
   return (
     <main>
-      <DataSource
-        productId={productId}
-        setInitialSnapshot={setInitialSnapshot}
-        setDeltaMessages={setDeltas}
-      />
+      {feedStatus === "feeding" ? (
+        <DataSource
+          productId={productId}
+          setInitialSnapshot={setInitialSnapshot}
+          setDeltaMessages={setDeltas}
+        />
+      ) : null}
       {initialSnapshot ? (
         <Orderbook
           initialSnapshot={initialSnapshot}
           deltas={deltas}
           onToggleFeedClick={handleToggleFeed}
+          feedStatus={feedStatus}
+          onRestartFeedClick={handleRestartFeed}
         />
       ) : (
         <p>pretty placeholder</p>

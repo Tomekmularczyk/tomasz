@@ -48,3 +48,5 @@ export const isDeltaMessage = (
 ): message is DeltaMessage => {
   return !!(message as DeltaMessage).asks || !!(message as DeltaMessage).bids;
 };
+
+export type FeedStatus = "feeding" | "stopped";

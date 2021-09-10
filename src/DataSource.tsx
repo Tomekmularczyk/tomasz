@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useInterval, usePrevious } from "react-use";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import {
   DeltaMessage,
@@ -8,7 +9,6 @@ import {
   ProductId,
   SocketMessage,
 } from "./types";
-import { useInterval, usePrevious } from "react-use";
 
 interface Props {
   productId: ProductId;
