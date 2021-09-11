@@ -135,9 +135,13 @@ export const OrdersList = ({
               }}
             >
               <DataRow shouldReverseColumns={shouldReverseColumns}>
-                <DataCell>{numberFormatter.format(total)}</DataCell>
-                <DataCell>{numberFormatter.format(size)}</DataCell>
-                <DataCell>
+                <DataCell data-testid="total">
+                  {numberFormatter.format(total)}
+                </DataCell>
+                <DataCell data-testid="size">
+                  {numberFormatter.format(size)}
+                </DataCell>
+                <DataCell data-testid="price">
                   <Price variant={colorVariant}>
                     {priceFormatter.format(price)}
                   </Price>
