@@ -27,25 +27,17 @@ function App() {
     setFeedStatus("stopped");
   });
 
-  const resetOrderbookData = useCallback(() => {
-    setInitialSnapshot(undefined);
-    setDeltas([]);
-  }, []);
-
   const handleToggleFeed = useCallback(() => {
     if (productId === ProductId.PI_ETHUSD) {
       setProductId(ProductId.PI_XBTUSD);
     } else {
       setProductId(ProductId.PI_ETHUSD);
     }
-    // reinitialize orderbook
-    resetOrderbookData();
-  }, [productId, resetOrderbookData]);
+  }, [productId]);
 
   const handleRestartFeed = useCallback(() => {
     setFeedStatus("feeding");
-    resetOrderbookData();
-  }, [resetOrderbookData]);
+  }, []);
 
   const handleFeedError = useCallback(() => {
     setFeedStatus("error");

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   DeltaMessage,
   InitialSnapshotMessage,
@@ -87,6 +87,11 @@ export const usePriceLevelsList = (
       setBids((state) => updatePriceLevel(state, delta.bids || []));
     });
   }, []);
+
+  useEffect(() => {
+    setAsks(createPriceLevelsMap(initialSnapshot.asks));
+    setBids(createPriceLevelsMap(initialSnapshot.bids));
+  }, [initialSnapshot]);
 
   return {
     asks: asksWithTotals,

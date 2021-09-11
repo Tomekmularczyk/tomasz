@@ -84,7 +84,7 @@ export const Orderbook = ({
           <Bids bids={bids} highestTotal={highestTotal} />
         </OrdersListWrapper>
       </OrdersContainer>
-      <Footer onToggleFeedClick={onToggleFeedClick} feedStatus={feedStatus} />
+      <Footer onToggleFeedClick={onToggleFeedClick} />
     </>
   );
 };
