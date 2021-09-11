@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { useEvent, useNetworkState } from "react-use";
+import styled from "styled-components/macro";
 import { DataSource } from "./DataSource";
 import { Orderbook } from "./Orderbook/Orderbook";
 import {
@@ -8,6 +9,11 @@ import {
   InitialSnapshotMessage,
   ProductId,
 } from "./types";
+
+const MainContainer = styled.main`
+  background-color: black;
+  font-family: "Courier New", sans-serif;
+`;
 
 function App() {
   const networkState = useNetworkState();
@@ -50,7 +56,7 @@ function App() {
   }
 
   return (
-    <main>
+    <MainContainer>
       {feedStatus === "feeding" ? (
         <DataSource
           productId={productId}
@@ -76,7 +82,7 @@ function App() {
       ) : (
         <p>pretty placeholder</p>
       )}
-    </main>
+    </MainContainer>
   );
 }
 

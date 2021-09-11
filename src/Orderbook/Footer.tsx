@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components/macro";
+import { FeedStatus } from "../types";
 
 const ToggleFeedButton = styled.button`
   background-color: purple;
@@ -21,14 +22,17 @@ const Container = styled.div`
 
 interface Props {
   onToggleFeedClick: () => void;
+  feedStatus: FeedStatus;
 }
 
-export const Footer = ({ onToggleFeedClick }: Props) => {
+export const Footer = ({ feedStatus, onToggleFeedClick }: Props) => {
   return (
     <Container>
-      <ToggleFeedButton type="button" onClick={onToggleFeedClick}>
-        Toggle Feed
-      </ToggleFeedButton>
+      {feedStatus === "feeding" ? (
+        <ToggleFeedButton type="button" onClick={onToggleFeedClick}>
+          Toggle Feed
+        </ToggleFeedButton>
+      ) : null}
     </Container>
   );
 };

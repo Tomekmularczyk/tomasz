@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components/macro";
+import { PriceLevelData } from "../types";
 
 type ColorVariant = "green" | "red";
 type DepthGraphAlign = "left" | "right";
@@ -40,9 +41,11 @@ const Price = styled.span<{ variant: ColorVariant }>`
 `;
 
 const numberFormatter = new Intl.NumberFormat("en-IN");
+
 const priceFormatter = new Intl.NumberFormat("en-IN", {
   minimumFractionDigits: 2,
 });
+
 const getLevelDepthBackground = ({
   total,
   highestTotal,
@@ -81,12 +84,6 @@ const getLevelDepthBackground = ({
   }
 };
 
-export interface PriceLevelData {
-  price: number;
-  size: number;
-  total: number;
-}
-
 interface Props {
   priceLevels: PriceLevelData[];
   highestTotal: number;
@@ -97,7 +94,7 @@ interface Props {
   shouldReversePriceLevels?: boolean;
 }
 
-export const PriceLevelsList = ({
+export const OrdersList = ({
   priceLevels,
   highestTotal,
   colorVariant,

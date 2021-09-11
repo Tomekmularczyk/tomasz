@@ -50,3 +50,9 @@ export const isDeltaMessage = (
 };
 
 export type FeedStatus = "feeding" | "stopped" | "error";
+
+export interface PriceLevelData {
+  price: number;
+  size: number;
+  total: number;
+}
