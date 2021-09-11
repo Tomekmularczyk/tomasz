@@ -9,6 +9,7 @@ import {
   ProductId,
   SocketMessage,
 } from "./types";
+import { useDeviceSpeed } from "./useDeviceType";
 
 interface Props {
   productId: ProductId;
@@ -16,11 +17,18 @@ interface Props {
   setDeltaMessages: (delta: DeltaMessage[]) => void;
 }
 
+/**
+ * Component that handles data fetching.
+ *
+ * This could be a hook, however there is no way to stop websocket using react-use-websocket
+ * other than unmount the hook.
+ */
 export const DataSource = ({
   productId,
   setInitialSnapshot,
   setDeltaMessages,
 }: Props) => {
+  const deviceSpeed = useDeviceSpeed();
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
     "wss://www.cryptofacilities.com/ws/v1"
   );
@@ -28,6 +36,7 @@ export const DataSource = ({
   const prevProductId = usePrevious(productId);
   const lastMessage: SocketMessage | undefined = lastJsonMessage;
 
+  // subscribe/unsubscribe to data feed
   useEffect(() => {
     if (readyState === ReadyState.OPEN) {
       sendJsonMessage({
@@ -44,6 +53,7 @@ export const DataSource = ({
     }
   }, [readyState, sendJsonMessage, productId, prevProductId]);
 
+  // handle streaming data
   useEffect(() => {
     if (!lastMessage) {
       return;
@@ -58,11 +68,16 @@ export const DataSource = ({
     }
   }, [lastMessage, setInitialSnapshot, productId]);
 
-  // batch updates to prevent too many re-renders
+  // batch updates to prevent too frequent re-renders
+  const interval = {
+    slow: 3_000,
+    medium: 1_500,
+    fast: 750,
+  }[deviceSpeed];
   useInterval(() => {
     setDeltaMessages(deltasRef.current);
     deltasRef.current = [];
-  }, 3000);
+  }, interval);
 
   return null;
 };

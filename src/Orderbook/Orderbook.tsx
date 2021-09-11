@@ -7,11 +7,11 @@ import {
   InitialSnapshotMessage,
   PriceLevel,
 } from "../types";
+import { useIsTabletAndAbove } from "../useIsTabletAndAbove";
 import { Footer } from "./Footer";
 import { Header } from "./Header";
 import { PriceLevelData, PriceLevelsList } from "./PriceLevelsList";
 import { Spread } from "./Spread";
-import { useIsTabletAndAbove } from "./useIsTabletAndAbove";
 
 const MainContainer = styled.div`
   background-color: black;

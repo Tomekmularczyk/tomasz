@@ -2,8 +2,8 @@ import React from "react";
 import styled from "styled-components/macro";
 import { Breakpoints } from "../theme";
 import { FeedStatus } from "../types";
+import { useIsTabletAndAbove } from "../useIsTabletAndAbove";
 import { Spread } from "./Spread";
-import { useIsTabletAndAbove } from "./useIsTabletAndAbove";
 
 const TopHeader = styled.div`
   display: grid;
