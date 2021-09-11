@@ -41,6 +41,10 @@ function App() {
     resetOrderbookData();
   }, [resetOrderbookData]);
 
+  const handleFeedError = useCallback(() => {
+    setFeedStatus("error");
+  }, [setFeedStatus]);
+
   if (networkState.online === false) {
     return <>you need to have internet connection to see the orderbook</>;
   }
@@ -52,7 +56,14 @@ function App() {
           productId={productId}
           setInitialSnapshot={setInitialSnapshot}
           setDeltaMessages={setDeltas}
+          onError={handleFeedError}
         />
+      ) : null}
+      {feedStatus === "error" ? (
+        <p>
+          We experienced an error loading the orderbook data.
+          <button onClick={handleRestartFeed}>click here to retry</button>
+        </p>
       ) : null}
       {initialSnapshot ? (
         <Orderbook

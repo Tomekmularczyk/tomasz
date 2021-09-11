@@ -15,6 +15,7 @@ interface Props {
   productId: ProductId;
   setInitialSnapshot: (snapshot: InitialSnapshotMessage) => void;
   setDeltaMessages: (delta: DeltaMessage[]) => void;
+  onError: () => void;
 }
 
 /**
@@ -27,10 +28,14 @@ export const DataSource = ({
   productId,
   setInitialSnapshot,
   setDeltaMessages,
+  onError,
 }: Props) => {
   const deviceSpeed = useDeviceSpeed();
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
-    "wss://www.cryptofacilities.com/ws/v1"
+    "wss://www.cryptofacilities.com/ws/v1",
+    {
+      onError,
+    }
   );
   const deltasRef = useRef<DeltaMessage[]>([]);
   const prevProductId = usePrevious(productId);

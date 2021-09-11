@@ -58,10 +58,13 @@ export const Header = ({
         />
       ) : null}
       <StatusText>
-        Status: {feedStatus}
+        Status: {feedStatus} {feedStatus === "error" ? "🔴" : null}
         <br />
         {feedStatus === "stopped" ? (
           <RestartButton onClick={onRestartFeedClick}>restart</RestartButton>
+        ) : null}
+        {feedStatus === "error" ? (
+          <RestartButton onClick={onRestartFeedClick}>retry</RestartButton>
         ) : null}
       </StatusText>
     </TopHeader>
