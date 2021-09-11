@@ -3,8 +3,6 @@ import styled from "styled-components/macro";
 
 const SpreadText = styled.p`
   color: gray;
-  margin-right: auto;
-  margin-left: auto;
   margin: 5px auto;
 `;
 

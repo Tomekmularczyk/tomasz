@@ -6,8 +6,6 @@ type ColorVariant = "green" | "red";
 type DepthGraphAlign = "left" | "right";
 
 const Level = styled.div`
-  padding-left: 10%;
-  padding-right: 5%;
   padding: 4px 5% 4px 10%;
 `;
 
