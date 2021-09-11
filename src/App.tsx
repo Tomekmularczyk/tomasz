@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { useEvent } from "react-use";
+import { useEvent, useNetworkState } from "react-use";
 import { DataSource } from "./DataSource";
 import { Orderbook } from "./Orderbook/Orderbook";
 import {
@@ -10,6 +10,7 @@ import {
 } from "./types";
 
 function App() {
+  const networkState = useNetworkState();
   const [feedStatus, setFeedStatus] = useState<FeedStatus>("feeding");
   const [productId, setProductId] = useState(ProductId.PI_XBTUSD);
   const [initialSnapshot, setInitialSnapshot] =
@@ -39,6 +40,10 @@ function App() {
     setFeedStatus("feeding");
     resetOrderbookData();
   }, [resetOrderbookData]);
+
+  if (networkState.online === false) {
+    return <>you need to have internet connection to see the orderbook</>;
+  }
 
   return (
     <main>
