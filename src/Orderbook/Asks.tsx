@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { PriceLevelData } from "../types";
 import { useIsTabletAndAbove } from "../useIsTabletAndAbove";
 import { OrdersList } from "./OrdersList";
@@ -8,7 +8,7 @@ interface Props {
   highestTotal: number;
 }
 
-export const Asks = ({ asks, highestTotal }: Props) => {
+export const Asks = memo(({ asks, highestTotal }: Props) => {
   const isTabletAndAbove = useIsTabletAndAbove();
 
   return (
@@ -21,4 +21,4 @@ export const Asks = ({ asks, highestTotal }: Props) => {
       shouldReverseColumns
     />
   );
-};
+});
